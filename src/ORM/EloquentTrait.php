@@ -55,6 +55,8 @@ trait EloquentTrait
      */
     public static function bootStapler()
     {
+
+
         static::saved(function ($instance) {
             foreach ($instance->attachedFiles as $attachedFile) {
                 $attachedFile->afterSave($instance);
