@@ -73,8 +73,8 @@ class Attachment implements AttachmentInterface, JsonSerializable
      * Constructor method.
      *
      * @param AttachmentConfig $config
-     * @param InterpolatorInterface     $interpolator
-     * @param ResizerInterface          $resizer
+     * @param InterpolatorInterface $interpolator
+     * @param ResizerInterface $resizer
      */
     public function __construct(AttachmentConfig $config, InterpolatorInterface $interpolator, ResizerInterface $resizer)
     {
@@ -87,7 +87,7 @@ class Attachment implements AttachmentInterface, JsonSerializable
      * Handle the dynamic setting of attachment options.
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -276,7 +276,7 @@ class Attachment implements AttachmentInterface, JsonSerializable
      * storage driver directly via the attachment.
      *
      * @param string $method
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return mixed
      */
@@ -298,11 +298,13 @@ class Attachment implements AttachmentInterface, JsonSerializable
      */
     public function url($styleName = '')
     {
-        if ($this->originalFilename()) {
-            return $this->storageDriver->url($styleName, $this);
-        }
 
-        return $this->defaultUrl($styleName);
+        if ($this->originalFilename()) {
+            $url = $this->storageDriver->url($styleName, $this);
+        } else
+            $url = $this->defaultUrl($styleName);
+        return urlencode($url);
+
     }
 
     /**
@@ -488,7 +490,7 @@ class Attachment implements AttachmentInterface, JsonSerializable
      * Set an attachment attribute on the underlying model instance.
      *
      * @param string $property
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function instanceWrite($property, $value)
     {
@@ -520,7 +522,7 @@ class Attachment implements AttachmentInterface, JsonSerializable
         foreach ($this->styles as $style) {
             $data[$style->name] = [
                 'path' => $this->path($style->name),
-                'url'  => $this->url($style->name)
+                'url' => $this->url($style->name)
             ];
         }
 
@@ -619,6 +621,6 @@ class Attachment implements AttachmentInterface, JsonSerializable
      */
     protected function defaultPath($styleName = '')
     {
-        return $this->public_path.$this->defaultUrl($styleName);
+        return $this->public_path . $this->defaultUrl($styleName);
     }
 }
