@@ -3,6 +3,7 @@
 namespace Codesleeve\Stapler\ORM;
 
 use Codesleeve\Stapler\Factories\Attachment as AttachmentFactory;
+use Illuminate\Support\Str;
 
 trait EloquentTrait
 {
@@ -28,7 +29,7 @@ trait EloquentTrait
      * This function acts as a quasi constructor for this trait.
      *
      * @param string $name
-     * @param array  $options
+     * @param array $options
      */
     public function hasAttachedFile($name, array $options = [])
     {
@@ -56,6 +57,14 @@ trait EloquentTrait
     public static function bootStapler()
     {
 
+        // Now, before the record is saved, set the filename attribute on the model:
+        static::saving(function ($instance) {
+            foreach ($instance->attachedFiles as $attachedFile) {
+                $pathInfo = pathinfo($attachedFile->originalFileName());
+                $newFilename = Str::slug($pathInfo['filename']) . '.' . $pathInfo['extension'];
+                $attachedFile->instanceWrite('file_name', $newFilename);
+            }
+        });
 
         static::saved(function ($instance) {
             foreach ($instance->attachedFiles as $attachedFile) {
@@ -96,7 +105,7 @@ trait EloquentTrait
      * Handle the dynamic setting of attachment objects.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function setAttribute($key, $value)
     {
