@@ -60,9 +60,12 @@ trait EloquentTrait
         // Now, before the record is saved, set the filename attribute on the model:
         static::saving(function ($instance) {
             foreach ($instance->attachedFiles as $attachedFile) {
-                $pathInfo = pathinfo($attachedFile->originalFileName());
-                $newFilename = Str::slug($pathInfo['filename']) . '.' . $pathInfo['extension'];
-                $attachedFile->instanceWrite('file_name', $newFilename);
+            	if(!empty($attachedFile->originalFileName()))
+            	{
+                	$pathInfo = pathinfo($attachedFile->originalFileName());
+                	$newFilename = Str::slug($pathInfo['filename']) . '.' . $pathInfo['extension'];
+                	$attachedFile->instanceWrite('file_name', $newFilename);
+                }
             }
         });
 
