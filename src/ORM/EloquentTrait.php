@@ -57,18 +57,6 @@ trait EloquentTrait
     public static function bootStapler()
     {
 
-        // Now, before the record is saved, set the filename attribute on the model:
-        static::saving(function ($instance) {
-            foreach ($instance->attachedFiles as $attachedFile) {
-            	if(!empty($attachedFile->originalFileName()))
-            	{
-                	$pathInfo = pathinfo($attachedFile->originalFileName());
-                	$newFilename = Str::slug($pathInfo['filename']) . '.' . $pathInfo['extension'];
-                	$attachedFile->instanceWrite('file_name', $newFilename);
-                }
-            }
-        });
-
         static::saved(function ($instance) {
             foreach ($instance->attachedFiles as $attachedFile) {
                 $attachedFile->afterSave($instance);
