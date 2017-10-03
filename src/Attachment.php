@@ -299,8 +299,10 @@ class Attachment implements AttachmentInterface, JsonSerializable
     public function url($styleName = '')
     {
         if ($this->originalFilename())
-            return $this->storageDriver->url($styleName, $this);
-        return $this->defaultUrl($styleName);
+            $url = $this->storageDriver->url($styleName, $this);
+        else
+            $url = $this->defaultUrl($styleName);
+        return preg_replace('/ /', '%20', $url);
     }
 
     /**
